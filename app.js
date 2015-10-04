@@ -69,27 +69,16 @@ app.engine("html", function(file, rootData, next){
 
 	function loadFile(template){
 		fs.exists(files.view, function(is){
-			if(is){
-				fs.readFile(files.view, function(err, data){
-					if(template){
-						rootData.body = data.toString();
-						console.log("compilando com layout e com view...");
-						render(template, rootData);
-					}else{
-						console.log("compilando sem layout e com view...");
-						render(data.toString(), rootData);
-					}
-				});
-			}else{
-				console.log("Não existe arquivo de view %s", files.view);
+			fs.readFile(files.view, function(err, data){
 				if(template){
-					console.log("compilando sem view e com layout...");
+					rootData.body = data.toString();
+					console.log("compilando com layout e com view...");
 					render(template, rootData);
 				}else{
-					console.log("compilando sem view e layout...");
-					render("", rootData);
+					console.log("compilando sem layout e com view...");
+					render(data.toString(), rootData);
 				}
-			}
+			});
 		})
 	}
 
