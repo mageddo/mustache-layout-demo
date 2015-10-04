@@ -10,13 +10,15 @@ var express = require('express'),
 
 
 
+app.locals({
+	"title": "Demo mustache layout with express"
+});
 
 
 
 	
 // some environment variables
 app.set('port', process.env.PORT || 3002);
-app.set("title", "Demo mustache layout with express");
 app.set('views', __dirname + '/view');
 app.set('view engine', 'html');
 app.set("view options", {layout: true});
@@ -71,9 +73,9 @@ app.engine("html", function(file, rootData, next){
 		fs.exists(files.view, function(is){
 			fs.readFile(files.view, function(err, data){
 				if(template){
-					rootData.body = data.toString();
+					//console.log("baixou ", data.toString());
 					console.log("compilando com layout e com view...");
-					render(template, rootData);
+					render(template, rootData, {body: data.toString()});
 				}else{
 					console.log("compilando sem layout e com view...");
 					render(data.toString(), rootData);
@@ -86,10 +88,11 @@ app.engine("html", function(file, rootData, next){
 		return that.root + "/" + view + that.ext;
 	}
 
-	function render(templateHtml, options){
+	function render(templateHtml, options, partials){
+		partials = partials || {};
 		console.log("renderizando...\n", templateHtml, "\n---------------\n", options);
 		try{
-			next(null, mustache.to_html(templateHtml, options));
+			next(null, mustache.to_html(templateHtml, options, partials));
 		}catch(err){
 			next(err);
 		}
@@ -111,7 +114,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get("/", function(req, res) {
 	res.render("index", {
-		nome: "elvis"
+		time: new Date().toString()
 	});
 });
 
